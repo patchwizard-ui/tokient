@@ -1,0 +1,107 @@
+openapi: 3.0.3
+info:
+  title: Tokient Insight Stream API
+  version: 0.2.0
+servers:
+  - url: https://tokient-insight-stream.lovable.app
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: APIKey
+  schemas:
+    Event:
+      type: object
+      required: [timestamp, provider, model, tokens_in, tokens_out, cost_est, status]
+      properties:
+        timestamp: { type: string, format: date-time }
+        project_id: { type: string, default: default }
+        provider: { type: string }
+        model: { type: string }
+        tokens_in: { type: integer, minimum: 0 }
+        tokens_out: { type: integer, minimum: 0 }
+        cost_est: { type: number, minimum: 0 }
+        status: { type: string }
+        fallback_from: { type: string }
+        meta: { type: object }
+    StatsResponse:
+      type: object
+      properties:
+        days: { type: integer }
+        project_id: { type: string }
+        daily:
+          type: array
+          items:
+            type: object
+            properties:
+              date: { type: string }
+              tokens_in: { type: integer }
+              tokens_out: { type: integer }
+              cost_est: { type: number }
+              total: { type: integer }
+              errors: { type: integer }
+              fallbacks: { type: integer }
+              byProvider:
+                type: object
+                additionalProperties:
+                  type: object
+                  properties:
+                    total: { type: integer }
+                    errors: { type: integer }
+                    tokens: { type: integer }
+                    cost: { type: number }
+        totals:
+          type: object
+          properties:
+            tokens_in: { type: integer }
+            tokens_out: { type: integer }
+            cost_est: { type: number }
+            total: { type: integer }
+            errors: { type: integer }
+            fallbacks: { type: integer }
+paths:
+  /api/health:
+    get:
+      summary: Health check
+      security: []   # public
+      responses:
+        '200':
+            description: OK
+  /api/log:
+    post:
+      summary: Ingest a single usage event
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Event'
+      responses:
+        '200': { description: Accepted }
+        '400': { description: Validation error }
+        '401': { description: Missing/invalid API key }
+        '403': { description: API key not authorized for project_id }
+  /api/stats:
+    get:
+      summary: Aggregated stats
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: query
+          name: days
+          schema: { type: integer, minimum: 1, maximum: 90, default: 7 }
+        - in: query
+          name: project_id
+          schema: { type: string, default: default }
+      responses:
+        '200':
+          description: Stats payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatsResponse'
+        '401': { description: Missing/invalid API key }
+        '403': { description: API key not authorized for project_id }

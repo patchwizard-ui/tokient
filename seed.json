@@ -1,0 +1,14 @@
+{
+  "events": [
+    {
+      "timestamp": "2025-08-25T14:03:00Z",
+      "project_id": "default",
+      "provider": "openai",
+      "model": "gpt-4o",
+      "tokens_in": 980,
+      "tokens_out": 340,
+      "cost_est": 0.0093,
+      "status": "success"
+    }
+  ]
+}

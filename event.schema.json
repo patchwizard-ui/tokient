@@ -1,0 +1,69 @@
+{
+  "type": "object",
+  "required": [
+    "timestamp",
+    "provider",
+    "model",
+    "tokens_in",
+    "tokens_out",
+    "cost_est",
+    "status"
+  ],
+  "properties": {
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "project_id": {
+      "type": "string",
+      "default": "default"
+    },
+    "provider": {
+      "type": "string",
+      "enum": [
+        "openai",
+        "anthropic",
+        "grok",
+        "google",
+        "meta",
+        "mistral",
+        "cohere",
+        "other"
+      ]
+    },
+    "model": {
+      "type": "string",
+      "minLength": 1
+    },
+    "tokens_in": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "tokens_out": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "cost_est": {
+      "type": "number",
+      "minimum": 0
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "success",
+        "rate_limit",
+        "server_error",
+        "bad_request",
+        "timeout",
+        "other"
+      ]
+    },
+    "fallback_from": {
+      "type": "string"
+    },
+    "meta": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": false
+}

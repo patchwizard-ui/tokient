@@ -1,0 +1,8 @@
+Please update the Tokient Insight Stream backend to enforce API key authentication using a Bearer token.
+- Security scheme: BearerAuth (see openapi.yaml).
+- Public: GET /api/health
+- Protected: POST /api/log, GET /api/stats
+- Validate that the provided API key exists, is 'active', and is authorized for the requested `project_id` (if present); otherwise return 403.
+- When REQUIRE_API_KEY=false, allow requests without auth (for local/testing).
+- Read allowed origins from ALLOWED_ORIGINS; apply CORS.
+- Keep the JSON schema validation for /api/log and continuous date bucket logic for /api/stats.
